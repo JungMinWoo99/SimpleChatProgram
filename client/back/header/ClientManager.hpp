@@ -29,6 +29,10 @@ public:
     bool RequestMsgList();
 
     bool SendMsg(const std::string& msg);
+
+    const std::vector<UserInfo>& GetUserList();
+
+    const std::vector<Msg>& GetMsgList();
     
     void Connect(std::string serv_addr, std::string service);
 
@@ -39,10 +43,6 @@ public:
     const std::string& GetOppId();
 
     const UserInfo& GetCurrentUser();
-
-    const std::vector<UserInfo>& GetUserList();
-
-    const std::vector<Msg>& GetMsgList();
 
     ErrorCode GetRecentError();
 };

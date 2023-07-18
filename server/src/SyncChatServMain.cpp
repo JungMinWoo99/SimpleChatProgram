@@ -2,7 +2,9 @@
 
 int main(void)
 {
-    SyncChatServ server;
-    server.RunTestServ();
+    boost::asio::io_context io_context;
+    SyncChatServAcceptor server(io_context);
+    server.StartAccept();
+    io_context.run();
     return 0;
 }

@@ -1,6 +1,37 @@
 #include "SyncChatServ.hpp"
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
+#include <iostream>
 
 using namespace std;
+using namespace boost::asio::ip;
+
+SyncChatServAcceptor::SyncChatServAcceptor(boost::asio::io_context& io_context) : io_context(io_context), acceptor(io_context,tcp::endpoint(tcp::v4(), ECHO_SERV_PORT))
+{
+}
+
+void SyncChatServAcceptor::StartAccept() 
+{
+    ServerSock *sock = new ServerSock(io_context);
+
+    acceptor.async_accept(sock->Socket(),boost::bind(&SyncChatServAcceptor::AcceptHandler,this,sock,boost::asio::placeholders::error));
+}
+
+void SyncChatServAcceptor::AcceptHandler(ServerSock* sock,const boost::system::error_code& error)
+{
+    if (!error)
+    {
+        cout << "클라이언트 연결" << endl;
+        auto chat_server_run = [](ServerSock *serv_sock)
+        {
+            SyncChatServ chat_server(*serv_sock);
+            delete serv_sock;
+        };
+        boost::thread chat_thread(chat_server_run, sock);
+        chat_thread.detach();
+    }
+    StartAccept();
+}
 
 int SyncChatServ::RecvClntRequest() 
 {
@@ -109,74 +140,66 @@ void SyncChatServ::AddMsg(Msg& user_msg)
     db.AddMsg(user_msg);
 }
 
-SyncChatServ::SyncChatServ() : server(), db("./SyncServerDB.db")
+void SyncChatServ::RunServ()
 {
-}
+    bool client_end = false;
 
-void SyncChatServ::RunTestServ()
-{
-    while (true)
+    while (!client_end)
     {
-        cout << "접속 대기중" << endl;
-
-        server.OpenSock();
-
-        cout << "클라이언트 접속" << endl;
-
-        bool client_end = false;
-
-        while (!client_end)
+        try
         {
-            try
+            int request_type = RecvClntRequest();
+
+            Msg recv_msg;
+            recv_msg.TransformFromPacket(&recv_buf[0]);
+
+            switch (request_type)
             {
-                int request_type = RecvClntRequest();
-
-                Msg recv_msg;
-                recv_msg.TransformFromPacket(&recv_buf[0]);
-
-                switch (request_type)
-                {
-                case LOGIN:
-                {
-                    AnswerLogin(recv_msg);
-                    break;
-                }
-                case SIGNUP:
-                {
-                    AnswerSignUp(recv_msg);
-                    break;
-                }
-                case USLSREQ:
-                {
-                    SendUserList();
-                    break;
-                }
-                case MSLSREQ:
-                {
-                    SendMsgList(recv_msg.id,recv_msg.opp_id);
-                    break;
-                }
-                case USERMSG:
-                {
-                    AddMsg(recv_msg);
-                    break;
-                }
-                case DISCNET:
-                {
-                    client_end = true;
-                    server.CloseSock();
-                    break;
-                }
-                default:
-                    break;
-                }
+            case LOGIN:
+            {
+                AnswerLogin(recv_msg);
+                break;
             }
-            catch (const std::exception &e)
+            case SIGNUP:
             {
-                std::cerr << e.what() << '\n';
+                AnswerSignUp(recv_msg);
+                break;
+            }
+            case USLSREQ:
+            {
+                SendUserList();
+                break;
+            }
+            case MSLSREQ:
+            {
+                SendMsgList(recv_msg.id, recv_msg.opp_id);
+                break;
+            }
+            case USERMSG:
+            {
+                AddMsg(recv_msg);
+                break;
+            }
+            case DISCNET:
+            {
+                client_end = true;
                 server.CloseSock();
                 break;
             }
+            default:
+                break;
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            server.CloseSock();
+            break;
         }
     }
+}
+
+SyncChatServ::SyncChatServ(ServerSock& sock) : server(sock), db("./SyncServerDB.db")
+{
+    RunServ();
 }
