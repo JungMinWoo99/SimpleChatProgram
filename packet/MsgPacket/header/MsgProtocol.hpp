@@ -41,6 +41,9 @@
 
 typedef int ErrorCode;
 
+class UserInfol;
+class Msg;
+
 struct MsgPacket
 {
     int mtype = 0;
@@ -49,14 +52,25 @@ struct MsgPacket
     char passwd[MAX_INFO_LEN + 1] = {0};
     char text_msg[MAX_TEXT_LEN + 1] = {0};
     char opp_id[MAX_INFO_LEN + 1] = {0};
-    int error_code = 0;  
+    int error_code = 0;
 };
 
-struct UserInfo
+class UserInfo
 {
-    char name[MAX_INFO_LEN + 1] = {0};
-    char id[MAX_INFO_LEN + 1] = {0};
-    char passwd[MAX_INFO_LEN + 1] = {0};
+public:
+    std::string name;
+    std::string id;
+    std::string passwd;
+
+    void TransformToPacket(MsgPacket *buf)const;
+
+    void TransformFromPacket(const MsgPacket *buf);
+
+    void TransformToMsg(Msg &buf)const;
+
+    void TransformFromMsg(const Msg &buf);
+
+    void PrintMsgContent();
 };
 
 class Msg
@@ -75,23 +89,17 @@ public:
     // 메크로 상수로 정의한 에러코드를 저장한 변수
     int error_code = 0; // 에러코드가 0이면 에러없이 성공했다는 의미
 
-    //패킷 변환 관련 함수
+    // 패킷 변환 관련 함수
 
-    void TransformToPacket(MsgPacket* buf);
+    void TransformToPacket(MsgPacket *buf) const;
 
-    void TransformFromPacket(const MsgPacket* buf);
+    void TransformFromPacket(const MsgPacket *buf);
 
-    void TransformToUserInfo(UserInfo* buf);
+    void TransformToUserInfo(UserInfo &buf) const;
 
-    void TransformFromUserInfo(const UserInfo* buf);
+    void TransformFromUserInfo(const UserInfo &buf);
 
     void PrintMsgContent();
-};
-
-struct MsgConverter
-{
-    static void UserInfoToMsgPacket(MsgPacket *dest, const UserInfo *src);
-    static void MsgPacketToUserInfo(UserInfo *dest, const MsgPacket *src);
 };
 
 #endif /* MSGPROTOCOL_HPP */

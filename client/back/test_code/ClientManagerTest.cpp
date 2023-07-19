@@ -19,8 +19,7 @@ int main(void)
     sign_up_msg.passwd="123";
     sign_up_msg.name = "minwoo";
 
-    sign_up_msg.TransformToPacket(&msg_buf);
-    MsgConverter::MsgPacketToUserInfo(&user_info_buf,&msg_buf);
+    sign_up_msg.TransformToUserInfo(user_info_buf);
     if(client_manager.SignUp(user_info_buf))
         cout<<"sign up success"<<endl;
     else
@@ -30,8 +29,7 @@ int main(void)
     login_msg.id="gamepain";
     login_msg.passwd="123";
     
-    login_msg.TransformToPacket(&msg_buf);
-    MsgConverter::MsgPacketToUserInfo(&user_info_buf,&msg_buf);
+    login_msg.TransformToUserInfo(user_info_buf);
     if(client_manager.Login(user_info_buf))
         cout<<"login success"<<endl;
     else

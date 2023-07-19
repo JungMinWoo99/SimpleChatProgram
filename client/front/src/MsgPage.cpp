@@ -113,7 +113,7 @@ void MsgPage::PrintMsgList()
     for (int i = 0; i < print_line_num && (i + msg_print_start_line) < msg_list.size(); i++)
     {
         Msg CurrentUserInfo;
-        CurrentUserInfo.TransformFromUserInfo(&client_manager.GetCurrentUser());
+        CurrentUserInfo.TransformFromUserInfo(client_manager.GetCurrentUser());
         if (msg_list[i + msg_print_start_line].id == CurrentUserInfo.id)
             TerminalIO::PrintStr(make_pair(80 - msg_list[i + msg_print_start_line].text_msg.length(), i), msg_list[i + msg_print_start_line].text_msg);
         else

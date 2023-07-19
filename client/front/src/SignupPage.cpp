@@ -162,7 +162,7 @@ void SignupPage::SignUp()
         sign_up_info.passwd = passwd_input_box.GetStr();
 
         UserInfo sign_up_info_buf;
-        sign_up_info.TransformToUserInfo(&sign_up_info_buf);
+        sign_up_info.TransformToUserInfo(sign_up_info_buf);
 
         bool is_sign_up_success = client_manager.SignUp(sign_up_info_buf);
         if (is_sign_up_success)

@@ -1,7 +1,16 @@
+WORKSPACEFOLDER = /Users/qqdld/Desktop/Dev/network_chat_program/SimpleChatProgram
+INCLUDEDIR = -I/boost/include/boost-1_81/ \
+             -I$(WORKSPACEFOLDER)/client/back/header/ \
+             -I${WORKSPACEFOLDER}/client/front/header \
+             -I${WORKSPACEFOLDER}/server/header \
+             -I${WORKSPACEFOLDER}/packet/MsgPacket/header \
+             -I${WORKSPACEFOLDER}/packet/MsgDB/header
+
 all : MsgEchoServ.exe ClientManagerTestServ.exe
 
 MsgEchoServ.exe : MsgEchoServ.cpp ../../packet/MsgPacket/obj/MsgProtocol.o ../../packet/MsgPacket/obj/MsgSockFunc.o
-	g++ -L/boost/lib/ -I/boost/include/boost-1_81/ \
+	g++ $(INCLUDEDIR) \
+		-L/boost/lib/ \
 	MsgEchoServ.cpp \
 	../../packet/MsgPacket/obj/MsgProtocol.o \
 	../../packet/MsgPacket/obj/MsgSockFunc.o \
@@ -11,7 +20,8 @@ MsgEchoServ.exe : MsgEchoServ.cpp ../../packet/MsgPacket/obj/MsgProtocol.o ../..
 ClientManagerTestServ.exe : ClientManagerTestServ.cpp \
 							../../packet/MsgPacket/obj/MsgProtocol.o \
 							../../packet/MsgPacket/obj/MsgSockFunc.o
-	g++ -L/boost/lib/ -I/boost/include/boost-1_81/ \
+	g++ $(INCLUDEDIR) \
+		-L/boost/lib/ \
 	ClientManagerTestServ.cpp \
 	../../packet/MsgPacket/obj/MsgProtocol.o \
 	../../packet/MsgPacket/obj/MsgSockFunc.o \

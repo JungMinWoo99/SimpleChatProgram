@@ -36,7 +36,7 @@ bool ServerDBManager::AddUserInfo(const UserInfo &user_info)
 
         return false;
     }
-    else if (strcmp(user_info.id, "") == 0)
+    else if (user_info.id.empty())
     {
         cout << "duplicate id" << endl;
         return false;
@@ -49,9 +49,9 @@ bool ServerDBManager::GetUserInfo(const std::string &user_id, UserInfo &buf)
     CallBackFunc call_back = [](void *buf, int attr_num, char **tuple, char **attr)
     {
         UserInfo *user_info_buf = (UserInfo *)buf;
-        strcpy(user_info_buf->name, tuple[0]);
-        strcpy(user_info_buf->id, tuple[1]);
-        strcpy(user_info_buf->passwd, tuple[2]);
+        user_info_buf->name = tuple[0];
+        user_info_buf->id = tuple[1];
+        user_info_buf->passwd = tuple[2];
         return 0;
     };
     
@@ -133,7 +133,7 @@ bool ServerDBManager::GetUserList(vector<UserInfo>& buf)
     {
         vector<UserInfo> *user_list_buf = (vector<UserInfo> *)buf;
         user_list_buf->resize(user_list_buf->size()+1);
-        strcpy(user_list_buf->back().id, tuple[0]);
+        user_list_buf->back().id=tuple[0];
 
         return 0;
     };

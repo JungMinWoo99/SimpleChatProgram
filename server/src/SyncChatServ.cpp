@@ -46,7 +46,7 @@ void SyncChatServ::AnswerLogin(Msg &login_msg)
 
     UserInfo user_info_buf;
     bool is_login_success = db.GetUserInfo(login_msg.id, user_info_buf);
-    answer_msg.TransformFromUserInfo(&user_info_buf);
+    answer_msg.TransformFromUserInfo(user_info_buf);
 
     if(is_login_success)
     {
@@ -74,7 +74,7 @@ void SyncChatServ::AnswerSignUp(Msg &sign_up_msg)
     answer_msg.mtype = SIGNUP;
 
     UserInfo user_info_buf;
-    sign_up_msg.TransformToUserInfo(&user_info_buf);
+    sign_up_msg.TransformToUserInfo(user_info_buf);
     bool is_sign_up_success = db.AddUserInfo(user_info_buf);
 
     if(is_sign_up_success)
@@ -98,7 +98,7 @@ void SyncChatServ::SendUserList()
 
     send_buf.resize(user_list.size());
     for (int i = 0; i < user_list.size(); i++)
-        MsgConverter::UserInfoToMsgPacket(&send_buf[i], &user_list[i]);
+        user_list[i].TransformToPacket(&send_buf[i]);
     server.SendMsg(send_buf);
 }
 
@@ -108,7 +108,7 @@ void SyncChatServ::SendMsgList(string& id, string& opp_id)
     UserInfo opp_info;
     db.GetUserInfo(opp_id,opp_info);
     Msg opp_info_msg;
-    opp_info_msg.TransformFromUserInfo(&opp_info);
+    opp_info_msg.TransformFromUserInfo(opp_info);
 
     if (id == opp_id)
     {

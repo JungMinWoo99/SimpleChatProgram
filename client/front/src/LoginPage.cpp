@@ -146,7 +146,7 @@ void LoginPage::Login()
         login_info.passwd = passwd_input_box.GetStr();
 
         UserInfo login_info_buf;
-        login_info.TransformToUserInfo(&login_info_buf);
+        login_info.TransformToUserInfo(login_info_buf);
 
         bool is_login_success = client_manager.Login(login_info_buf);
         if (is_login_success)

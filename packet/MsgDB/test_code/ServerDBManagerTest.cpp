@@ -19,7 +19,7 @@ int main(void)
         test_msg.name = (format("minwoo%1%") % i).str();
         test_msg.id = (format("qwer%1%") % i).str();
         test_msg.passwd = (format("123%1%") % i).str();
-        test_msg.TransformToUserInfo(&send_buf);
+        test_msg.TransformToUserInfo(send_buf);
         if (!db_manager.AddUserInfo(send_buf))
         {
             cout << "유저 추가 테스트 실패" << endl;

@@ -11,8 +11,7 @@ bool ClientManager::Login(const UserInfo& login_info)
     Msg login_request_msg;
     vector<MsgPacket> buf(1);
 
-    MsgConverter::UserInfoToMsgPacket(&buf[0],&login_info);
-    login_request_msg.TransformFromPacket(&buf[0]);
+    login_info.TransformToMsg(login_request_msg);
     login_request_msg.mtype=LOGIN;
     login_request_msg.TransformToPacket(&buf[0]);
     
@@ -24,7 +23,7 @@ bool ClientManager::Login(const UserInfo& login_info)
     {
         Msg tem;
         tem.TransformFromPacket(&buf.front());
-        tem.TransformToUserInfo(&current_user);
+        tem.TransformToUserInfo(current_user);
         return true;        
     }
     else
@@ -38,8 +37,7 @@ bool ClientManager::SignUp(const UserInfo& sign_up_info)
     Msg sign_up_request_msg;
     vector<MsgPacket> buf(1);
 
-    MsgConverter::UserInfoToMsgPacket(&buf[0],&sign_up_info);
-    sign_up_request_msg.TransformFromPacket(&buf[0]);
+    sign_up_info.TransformToMsg(sign_up_request_msg);
     sign_up_request_msg.mtype=SIGNUP;
     sign_up_request_msg.TransformToPacket(&buf[0]);
 
@@ -67,7 +65,7 @@ bool ClientManager::RequestUserList()
         user_list.clear();
         user_list.resize(buf.size());
         for(int i=0;i<buf.size();i++)
-            MsgConverter::MsgPacketToUserInfo(&user_list[i],&buf[i]);
+            user_list[i].TransformFromPacket(&buf[i]);
         
         return true;
     }
