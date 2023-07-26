@@ -71,7 +71,7 @@ private:
     {
         send_buf.resize(user_list.size());
         for (int i = 0; i < user_list.size(); i++)
-            MsgConverter::UserInfoToMsgPacket(&send_buf[i], &user_list[i]);
+            user_list[i].TransformToPacket(&send_buf[i]);
         SendMsg(send_buf);
     }
 
@@ -89,10 +89,8 @@ public:
         user_list.resize(30);
         Msg tem;
         tem.id = "oo";
-        MsgPacket tem2;
-        tem.TransformToPacket(&tem2);
         for (int i = 0; i < user_list.size(); i++)
-            MsgConverter::MsgPacketToUserInfo(&user_list[i], &tem2);
+            tem.TransformToUserInfo(user_list[i]);
 
         msg_list.resize(20);
         msg_list[0].text_msg = "hello";

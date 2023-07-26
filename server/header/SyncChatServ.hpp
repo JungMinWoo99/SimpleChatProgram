@@ -4,20 +4,6 @@
 #include "ServerSock.hpp"
 #include "ServerDBManager.hpp"
 
-class SyncChatServAcceptor
-{
-private:
-    boost::asio::io_context& io_context;
-    boost::asio::ip::tcp::acceptor acceptor;
-
-public:
-    SyncChatServAcceptor(boost::asio::io_context& io_context);
-
-    void StartAccept();
-
-    void AcceptHandler(ServerSock* sock,const boost::system::error_code& error);
-};
-
 class SyncChatServ
 {
 private:

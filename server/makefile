@@ -7,7 +7,7 @@ INCLUDEDIR = -I/boost/include/boost-1_81/ \
              -I${WORKSPACEFOLDER}/packet/MsgDB/header
 
 
-all: obj/ServerSock.o obj/SyncChatServ.o SyncServerMain.exe
+all: obj/ServerSock.o obj/SyncChatServ.o obj/AsyncServAcceptor.o SyncServerMain.exe
 
 obj/ServerSock.o : src/ServerSock.cpp
 	g++ -c $(INCLUDEDIR) src/ServerSock.cpp -o obj/ServerSock.o
@@ -15,8 +15,11 @@ obj/ServerSock.o : src/ServerSock.cpp
 obj/SyncChatServ.o : src/SyncChatServ.cpp
 	g++ -c $(INCLUDEDIR) src/SyncChatServ.cpp -o obj/SyncChatServ.o
 
+obj/AsyncServAcceptor.o : src/AsyncServAcceptor.cpp
+	g++ -c $(INCLUDEDIR) src/AsyncServAcceptor.cpp -o obj/AsyncServAcceptor.o
+
 SyncServerMain.exe : src/SyncChatServMain.cpp \
-					 obj/ServerSock.o obj/SyncChatServ.o \
+					 obj/ServerSock.o obj/SyncChatServ.o obj/AsyncServAcceptor.o \
 					 ../packet/MsgPacket/obj/MsgProtocol.o \
 					 ../packet/MsgPacket/obj/MsgSockFunc.o \
 					 ../packet/MsgDB/obj/ServerDBManager.o \
@@ -26,6 +29,7 @@ SyncServerMain.exe : src/SyncChatServMain.cpp \
 		src/SyncChatServMain.cpp \
 		obj/ServerSock.o \
 		obj/SyncChatServ.o \
+		obj/AsyncServAcceptor.o \
 		../packet/MsgPacket/obj/MsgProtocol.o \
 		../packet/MsgPacket/obj/MsgSockFunc.o \
 		../packet/MsgDB/obj/ServerDBManager.o \

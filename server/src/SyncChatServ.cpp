@@ -6,33 +6,6 @@
 using namespace std;
 using namespace boost::asio::ip;
 
-SyncChatServAcceptor::SyncChatServAcceptor(boost::asio::io_context& io_context) : io_context(io_context), acceptor(io_context,tcp::endpoint(tcp::v4(), ECHO_SERV_PORT))
-{
-}
-
-void SyncChatServAcceptor::StartAccept() 
-{
-    ServerSock *sock = new ServerSock(io_context);
-
-    acceptor.async_accept(sock->Socket(),boost::bind(&SyncChatServAcceptor::AcceptHandler,this,sock,boost::asio::placeholders::error));
-}
-
-void SyncChatServAcceptor::AcceptHandler(ServerSock* sock,const boost::system::error_code& error)
-{
-    if (!error)
-    {
-        cout << "클라이언트 연결" << endl;
-        auto chat_server_run = [](ServerSock *serv_sock)
-        {
-            SyncChatServ chat_server(*serv_sock);
-            delete serv_sock;
-        };
-        boost::thread chat_thread(chat_server_run, sock);
-        chat_thread.detach();
-    }
-    StartAccept();
-}
-
 int SyncChatServ::RecvClntRequest() 
 {
     server.RecvMsg(recv_buf);
